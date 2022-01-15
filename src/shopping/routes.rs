@@ -1,7 +1,7 @@
 use uuid::Uuid;
 
 use crate::core::aggregate::AggregateEntity;
-use crate::shopping::order::{Order, OrderEvent};
+use crate::shopping::order::Order;
 
 #[get("/shopping/actions/create-order")]
 pub async fn create_order() -> String {
