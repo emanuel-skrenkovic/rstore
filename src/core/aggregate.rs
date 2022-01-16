@@ -1,5 +1,3 @@
-use crate::core::event::Event;
-
 pub trait AggregateEntity<TEventBase> {
     fn uncommitted_events(&self) -> &Vec<TEventBase>;
     fn uncommitted_events_mut(&mut self) -> &mut Vec<TEventBase>;

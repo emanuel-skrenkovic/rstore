@@ -1,6 +1,6 @@
+mod core;
 mod error;
 mod shopping;
-mod core;
 
 use crate::shopping::routes as order_routes;
 
