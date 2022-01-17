@@ -1,3 +1,4 @@
+#[async_trait]
 pub trait CommandHandler<TResult> {
-    fn execute(&self) -> TResult;
+    async fn execute(&self) -> TResult;
 }

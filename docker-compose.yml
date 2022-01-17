@@ -1,0 +1,38 @@
+version: '2.4'
+services:
+  rstore-eventstore:
+    container_name: rstore.eventstore
+    image: eventstore/eventstore:21.6.0-buster-slim
+    environment:
+      - EVENSTORE_CLUSTER_SIZE=1
+      - EVENTSTORE_RUN_PROJECTIONS=All
+      - EVENTSTORE_START_STANDARD_PROJECTIONS=true
+      - EVENTSTORE_EXT_TCP_PORT=1113
+      - EVENTSTORE_HTTP_PORT=2113
+      - EVENTSTORE_INSECURE=true
+      - EVENTSTORE_ENABLE_EXTERNAL_TCP=true
+      - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
+    ports:
+      - "1113:1113"
+      - "2113:2113"
+    networks:
+      - rstore-network
+
+  rstore-postgres:
+    container_name: rstore.postgres
+    image: postgres:14-alpine
+    command: ["postgres"]
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=Store
+    ports:
+      - "5432:5432"
+    networks:
+      - rstore-network
+
+networks:
+  rstore-network:
+    name: rstore-network
+
+

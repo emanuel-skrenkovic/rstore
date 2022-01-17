@@ -1,3 +1,4 @@
+use rocket::serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::core::aggregate::AggregateEntity;
@@ -12,13 +13,13 @@ pub struct Order {
     uncommitted_events: Vec<OrderEvent>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct OrderEvent {
     pub order_id: Uuid,
     pub kind: OrderEventKind,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum OrderEventKind {
     OrderCreatedEvent { customer_id: Uuid },
     OrderPaymentSubmittedEvent { payment_id: Uuid },
@@ -36,7 +37,7 @@ impl Order {
         order.apply_event(OrderEvent {
             order_id: id.to_owned(),
             kind: OrderEventKind::OrderCreatedEvent {
-                customer_id: customer_id.to_owned()
+                customer_id: customer_id.to_owned(),
             },
         });
 
