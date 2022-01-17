@@ -46,12 +46,12 @@ impl Order {
 
     pub fn submit_payment(&mut self, payment_id: &Uuid) -> Result<()> {
         if self.payment_id.is_some() {
-            return Result::Err(Error::Input {
+            return Result::Err(Box::new(Error::Input {
                 message: format!(
                     "Payment with id {} was already added",
                     self.payment_id.unwrap()
                 ),
-            });
+            }));
         }
 
         self.apply_event(OrderEvent {
