@@ -71,6 +71,8 @@ impl AggregateStore {
         stream_name: &str,
         agg: TEntity,
     ) -> Result<()> {
+        // TODO: need to deal with this. Currently only take the first
+        // event as it is serialized into an array otherwise.
         let payload = EventData::json("order-event", &agg.uncommitted_events().first().unwrap());
 
         let write_result = self
