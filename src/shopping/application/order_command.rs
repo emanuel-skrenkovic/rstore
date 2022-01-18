@@ -3,7 +3,7 @@ use uuid::Uuid;
 use crate::core::command::CommandHandler;
 use crate::core::eventstore;
 use crate::core::eventstore::AggregateStore;
-use crate::core::result::{Error, Result};
+use crate::core::result::Result;
 use crate::shopping::domain::order::{Order, OrderEvent};
 
 pub struct CreateOrderCommand {
@@ -41,10 +41,6 @@ impl CommandHandler<Result<()>> for OrderSubmitPaymentCommand {
 
         order.submit_payment(&self.payment_id)?;
 
-        store.save(&self.order_id.to_string(), order).await?;
-
-        Result::Err(Box::new(Error::Internal {
-            message: format!("Could not read stream {}", self.order_id),
-        }))
+        store.save(&self.order_id.to_string(), order).await
     }
 }
