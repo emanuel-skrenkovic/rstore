@@ -6,6 +6,7 @@ use eventstore::ClientSettingsParseError;
 #[derive(Debug)]
 pub enum Error {
     Input { message: String },
+    NotFound { message: String },
     Internal { message: String },
 }
 
@@ -16,6 +17,9 @@ impl std::fmt::Display for Error {
         match self {
             Error::Input { message: _ } => {
                 write!(f, "Input Error")
+            }
+            Error::NotFound { message: _ } => {
+                write!(f, "Not Found Error")
             }
             Error::Internal { message: _ } => {
                 write!(f, "Internal Error")

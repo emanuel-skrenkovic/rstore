@@ -4,6 +4,7 @@ use uuid::Uuid;
 use crate::core::aggregate::AggregateEntity;
 use crate::error::result::{Error, Result};
 
+#[derive(Default)]
 pub struct Order {
     pub id: Uuid,
     customer_id: Uuid,

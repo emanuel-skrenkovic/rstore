@@ -14,5 +14,12 @@ async fn index() -> &'static str {
 
 #[launch]
 fn rocket() -> _ {
-    rocket::build().mount("/", routes![index, order_routes::create_order])
+    rocket::build().mount(
+        "/",
+        routes![
+            index,
+            order_routes::create_order,
+            order_routes::submit_order_payment
+        ],
+    )
 }

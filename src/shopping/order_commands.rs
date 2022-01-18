@@ -1,11 +1,10 @@
-use ::eventstore::EventData;
 use uuid::Uuid;
 
-use crate::core::aggregate::AggregateEntity;
 use crate::core::command::CommandHandler;
 use crate::core::eventstore;
-use crate::error::result::Result;
-use crate::shopping::order::Order;
+use crate::core::eventstore::AggregateStore;
+use crate::error::result::{Error, Result};
+use crate::shopping::order::{Order, OrderEvent};
 
 pub struct CreateOrderCommand {
     pub customer_id: Uuid,
@@ -15,15 +14,37 @@ pub struct CreateOrderCommand {
 #[async_trait]
 impl CommandHandler<Result<Uuid>> for CreateOrderCommand {
     async fn execute(&self) -> Result<Uuid> {
-        let client = eventstore::client().await?;
+        let order_id = Uuid::new_v4();
+        let order = Order::new(&order_id, &self.customer_id);
 
-        let order = Order::new(&Uuid::new_v4(), &self.customer_id);
+        let store: AggregateStore = eventstore::AggregateStore::create().await;
 
-        let payload = EventData::json("order-event", &order.uncommitted_events());
-        let _ = client
-            .append_to_stream(order.id.to_string(), &Default::default(), payload?)
+        store.save(&order_id.to_string(), order).await?;
+
+        Result::Ok(order_id)
+    }
+}
+
+pub struct OrderSubmitPaymentCommand {
+    pub order_id: Uuid,
+    pub payment_id: Uuid,
+}
+
+#[async_trait]
+impl CommandHandler<Result<()>> for OrderSubmitPaymentCommand {
+    async fn execute(&self) -> Result<()> {
+        let store: AggregateStore = eventstore::AggregateStore::create().await;
+
+        let mut order = store
+            .load::<Order, OrderEvent>(self.order_id.to_string())
             .await?;
 
-        Result::Ok(order.id)
+        order.submit_payment(&self.payment_id)?;
+
+        store.save(&self.order_id.to_string(), order).await?;
+
+        Result::Err(Box::new(Error::Internal {
+            message: format!("Could not read stream {}", self.order_id),
+        }))
     }
 }
