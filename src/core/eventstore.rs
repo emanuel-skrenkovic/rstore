@@ -2,8 +2,7 @@ use crate::error::result::{Error, Result};
 
 use crate::core::aggregate::AggregateEntity;
 use eventstore::{
-    All, Client, EventData, ReadResult, ReadStreamOptions, StreamPosition,
-    WrongExpectedVersion,
+    All, Client, EventData, ReadResult, ReadStreamOptions, StreamPosition, WrongExpectedVersion,
 };
 use rocket::futures::StreamExt;
 use rocket::serde::Serialize;
@@ -31,7 +30,7 @@ impl AggregateStore {
 
     pub async fn load<
         TEntity: AggregateEntity<TEventBase> + Default,
-        TEventBase: DeserializeOwned
+        TEventBase: DeserializeOwned,
     >(
         &self,
         id: String,
@@ -58,11 +57,16 @@ impl AggregateStore {
             let agg: TEntity = TEntity::hydrate(events);
             return Result::Ok(agg);
         } else if let ReadResult::StreamNotFound(not_found_error) = event_stream {
-            return Result::Err(Box::new(Error::NotFound { message: not_found_error }));
+            return Result::Err(Box::new(Error::NotFound {
+                message: not_found_error,
+            }));
         }
 
         return Result::Err(Box::new(Error::Internal {
-            message: format!("Unexpected error occurred while reading from stream '{}'.", &id)
+            message: format!(
+                "Unexpected error occurred while reading from stream '{}'.",
+                &id
+            ),
         }));
     }
 
@@ -71,13 +75,15 @@ impl AggregateStore {
         stream_name: &str,
         agg: TEntity,
     ) -> Result<()> {
-        // TODO: need to deal with this. Currently only take the first
-        // event as it is serialized into an array otherwise.
-        let payload = EventData::json("order-event", &agg.uncommitted_events().first().unwrap());
+        let payload: Vec<EventData> = agg
+            .uncommitted_events()
+            .iter()
+            .map(|event| EventData::json(std::any::type_name::<TEventBase>(), event).unwrap())
+            .collect();
 
         let write_result = self
             .client
-            .append_to_stream(stream_name, &Default::default(), payload?)
+            .append_to_stream(stream_name, &Default::default(), payload)
             .await?;
 
         if let Err(WrongExpectedVersion { current, expected }) = write_result {

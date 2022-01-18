@@ -3,6 +3,7 @@ use std::fmt::Formatter;
 
 use eventstore::ClientSettingsParseError;
 
+// TODO: create struct that contains message + ErrorKind
 #[derive(Debug)]
 pub enum Error {
     Input { message: String },

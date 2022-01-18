@@ -27,6 +27,6 @@ pub async fn submit_order_payment(order_id: String) -> &'static str {
 
     match submit_order_payment_result {
         Ok(()) => "Ok",
-        Err(_) => "Error"
+        Err(_) => "Error",
     }
 }
