@@ -1,3 +1,3 @@
-pub mod order;
-pub mod order_commands;
+pub mod domain;
 pub mod routes;
+pub mod application;

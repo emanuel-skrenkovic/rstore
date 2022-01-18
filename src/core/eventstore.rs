@@ -1,4 +1,4 @@
-use crate::error::result::{Error, Result};
+use crate::core::result::{Error, Result};
 
 use crate::core::aggregate::AggregateEntity;
 use eventstore::{

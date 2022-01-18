@@ -3,8 +3,8 @@ use uuid::Uuid;
 use crate::core::command::CommandHandler;
 use crate::core::eventstore;
 use crate::core::eventstore::AggregateStore;
-use crate::error::result::{Error, Result};
-use crate::shopping::order::{Order, OrderEvent};
+use crate::core::result::{Error, Result};
+use crate::shopping::domain::order::{Order, OrderEvent};
 
 pub struct CreateOrderCommand {
     pub customer_id: Uuid,

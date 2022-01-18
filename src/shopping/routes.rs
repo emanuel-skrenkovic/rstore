@@ -2,7 +2,7 @@ use std::str::FromStr;
 use uuid::Uuid;
 
 use crate::core::command::CommandHandler;
-use crate::shopping::order_commands::{CreateOrderCommand, OrderSubmitPaymentCommand};
+use crate::shopping::application::order_command::{CreateOrderCommand, OrderSubmitPaymentCommand};
 
 #[get("/shopping/actions/create-order")]
 pub async fn create_order() -> String {
