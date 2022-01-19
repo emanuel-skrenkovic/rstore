@@ -1,4 +1,4 @@
-Playing aroung and learning Rust backend development.
+Playing around and learning Rust backend development.
 
 Using:
 - Rocket
