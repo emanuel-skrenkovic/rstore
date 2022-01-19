@@ -1,3 +1,6 @@
+pub mod application;
 pub mod domain;
 pub mod routes;
-pub mod application;
+
+#[cfg(test)]
+pub mod test;
